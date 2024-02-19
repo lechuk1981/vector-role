@@ -1,0 +1,18 @@
+---
+- name: Get Vector distrib
+  ansible.builtin.get_url:
+    url: https://packages.timber.io/vector/0.21.1/vector-0.21.1-1.{{ ansible_architecture }}.rpm
+    dest: ./vector-0.21.1-1.{{ ansible_architecture }}.rpm
+    mode: o644
+- name: Install Vector packages
+  become: true
+  ansible.builtin.yum:
+    name: vector-0.21.1-1.{{ ansible_architecture }}.rpm
+  notify: Start Vector service
+
+- name: Deploy config Vector
+  ansible.builtin.template:
+    src: ./templates/vector.j2
+    dest: /etc/vector/vector.toml
+    mode: o644
+  notify: Start Vector service
